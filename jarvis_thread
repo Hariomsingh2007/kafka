@@ -1,0 +1,41 @@
+'''This is the jarvis thread implemementation'''
+
+
+import Audio_to_text_translator as AudioConverter
+import Jarvis_WebPage as JWeb
+from threading import Thread
+import queue
+
+
+q = Queue(maxsize=0)
+
+def get_voice():
+    while(1):
+        Audio_Txt = AudioConverter.main()
+        q.put(Audio_Txt)
+
+def run_command(q):
+    while True:
+        Audio_Txt=q.get()
+        print(Audio_Txt)
+        if 'jarvis' in Audio_Txt:
+            Audio_list = Audio_Txt.split(' ')
+            if 'play' in Audio_list:
+                txt = ' '.join(Audio_list[2:])
+                print('play')
+                print(txt)
+                JWeb.youtubeSearch(txt)
+            elif 'search' in Audio_Txt:
+                txt = ' '.join(Audio_list[2:])
+                print('search')
+                print(txt)
+                JWeb.websearch(txt)
+        q.task_done()
+
+
+
+worker1 = Thread(target=get_voice)
+worker2 = Thread(target=run_command, args=(q,))
+
+
+q.join
